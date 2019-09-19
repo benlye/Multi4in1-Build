@@ -60,7 +60,7 @@ fi
 printf "Checking for Multi4in1 board package updates ...\n"
 
 # Update the package index
-arduino-cli core update-index
+arduino-cli core update-index > /dev/nul
 
 # Update the board we're using, if needed
 if [[ "$BOARD" == multi4in1:avr* ]]; then
