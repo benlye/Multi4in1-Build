@@ -1,0 +1,39 @@
+dist: trusty
+sudo: true
+
+language: c
+
+services:
+  - docker
+
+notifications:
+  email: false
+
+before_install:
+  - git clone --recursive https://github.com/pascallanger/DIY-Multiprotocol-TX-Module.git /tmp/multifw
+  - ls -al /tmp/multifw/
+  
+install:
+  - cd ${TRAVIS_BUILD_DIR}
+  - ls -al
+  - docker build -t benlye/multi4in1-build .
+
+before_script:
+  - export -f travis_fold
+  - export -f travis_nanoseconds
+  - export -f travis_time_start
+  - export -f travis_time_finish
+  - start_fold() { echo -e "travis_fold:start:$1"; }
+  - end_fold() { echo -e "\ntravis_fold:end:$1\r"; }
+  - runBuild() { exitcode=0; start_fold $1; travis_time_start; echo "docker run --rm -it -v /tmp/multifw:/multi -e \"BOARD=$1\"  benlye/multi4in1-build"; docker run --rm -it -v /tmp/multifw:/multi -e "BOARD=$1" benlye/multi4in1-build; exitcode=$?; end_fold $1; echo; return $exitcode; }
+
+script:
+#  - runBuild "multi4in1:avr:multiatmega328p
+#  - runBuild "multi4in1:avr:multiatmega328p:bootloader=none"
+#  - runBuild "multi4in1:avr:multiatmega328p:bootloader=optiboot"
+  - runBuild "multi4in1:STM32F1:multistm32f103c"
+  - runBuild "multi4in1:STM32F1:multistm32f103c:debug_option=none"
+  - runBuild "multi4in1:STM32F1:multistm32f103c:debug_option=native"
+  - runBuild "multi4in1:STM32F1:multistm32f103c:debug_option=ftdi"
+  - runBuild "multi4in1:avr:multixmega32d4"
+  
