@@ -49,8 +49,11 @@ fi
 
 # Error if the board is not recognized
 if [ "$BOARD" != "multi4in1:avr:multiatmega328p:bootloader=none" ] && [ "$BOARD" != "multi4in1:avr:multiatmega328p:bootloader=optiboot" ] \
+    && [ "$BOARD" != "multi4in1-devel:avr:multiatmega328p:bootloader=none" ] && [ "$BOARD" != "multi4in1-devel:avr:multiatmega328p:bootloader=optiboot" ] \
     && [ "$BOARD" != "multi4in1:STM32F1:multistm32f103c:debug_option=none" ] && [ "$BOARD" != "multi4in1:STM32F1:multistm32f103c:debug_option=native" ] && [ "$BOARD" != "multi4in1:STM32F1:multistm32f103c:debug_option=ftdi" ] \
-    && [ "$BOARD" != "multi4in1:avr:multixmega32d4" ]; then
+    && [ "$BOARD" != "multi4in1-devel:STM32F1:multistm32f103c:debug_option=none" ] && [ "$BOARD" != "multi4in1-devel:STM32F1:multistm32f103c:debug_option=native" ] && [ "$BOARD" != "multi4in1-devel:STM32F1:multistm32f103c:debug_option=ftdi" ] \
+    && [ "$BOARD" != "multi4in1:avr:multixmega32d4" ] \
+    && [ "$BOARD" != "multi4in1-devel:avr:multixmega32d4" ]; then
     printf "ERROR: Unknown board '$BOARD' specified.\n\n"
     showusage
     exit 1
@@ -70,10 +73,10 @@ if [[ "$BOARD" == multi4in1:STM32F1* ]]; then
     arduino-cli core upgrade multi4in1:STM32F1
 fi
 if [[ "$BOARD" == multi4in1-devel:avr* ]]; then
-    arduino-cli core upgrade multi4in1:avr
+    arduino-cli core upgrade multi4in1-devel:avr
 fi
 if [[ "$BOARD" == multi4in1-devel:STM32F1* ]]; then
-    arduino-cli core upgrade multi4in1:STM32F1
+    arduino-cli core upgrade multi4in1-devel:STM32F1
 fi
 
 # Make a copy of the firmware source
@@ -84,12 +87,8 @@ cp -r /multi/Multiprotocol /tmp/build/
 dos2unix -q do_version
 cp do_version /root/.arduino15/packages/multi4in1/hardware/STM32F1/1.1.6/tools/linux
 cp do_version /root/.arduino15/packages/multi4in1/hardware/STM32F1/1.1.6/tools/linux64
-cp do_version /root/.arduino15/packages/multi4in1-devel/hardware/STM32F1/1.1.6/tools/linux
-cp do_version /root/.arduino15/packages/multi4in1-devel/hardware/STM32F1/1.1.6/tools/linux64
 cp do_version /root/.arduino15/packages/multi4in1/hardware/avr/1.0.9/tools/linux
 cp do_version /root/.arduino15/packages/multi4in1/hardware/avr/1.0.9/tools/linux64
-cp do_version /root/.arduino15/packages/multi4in1-devel/hardware/avr/1.0.9/tools/linux
-cp do_version /root/.arduino15/packages/multi4in1-devel/hardware/avr/1.0.9/tools/linux64
 
 # Compile the firmware
 printf "\nCompiling the Multi4in1 firmware ...\n"
