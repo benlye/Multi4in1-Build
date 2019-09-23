@@ -43,11 +43,11 @@ Board options are:
 
 | Board Type | Alias | FQBN | Equivalent IDE Option |
 | --- | --- | --- | --- |
-| AVR | avr | multi4in1:avr:multiatmega328p | Bootloader => None |
-| AVR | avr-optiboot | multi4in1:avr:multiatmega328p:bootloader=optiboot | Bootloader => Optiboot |
-| STM32 | stm32 | multi4in1:STM32F1:multistm32f103c | Debug Option => None |
-| STM32 | stm32-usbdebug | multi4in1:STM32F1:multistm32f103c:debug_option=native | Debug Option => Native USB Debugging |
-| STM32 | stm32-ftdidebug | multi4in1:STM32F1:multistm32f103c:debug_option=ftdi | Debug Option => FTDI Debugging |
-| OrangeRX | orx | multi4in1:avr:multixmega32d4 | |
+| AVR | avr | `multi4in1:avr:multiatmega328p` | Bootloader => None |
+| AVR | avr-optiboot | `multi4in1:avr:multiatmega328p:bootloader=optiboot` | Bootloader => Optiboot |
+| STM32 | stm32 | `multi4in1:STM32F1:multistm32f103c` | Debug Option => None |
+| STM32 | stm32-usbdebug | `multi4in1:STM32F1:multistm32f103c:debug_option=native` | Debug Option => Native USB Debugging |
+| STM32 | stm32-ftdidebug | `multi4in1:STM32F1:multistm32f103c:debug_option=ftdi` | Debug Option => FTDI Debugging |
+| OrangeRX | orx | `multi4in1:avr:multixmega32d4` | |
 
-'Devel' boards can be specified by appending '-devel' to the alias of substituting 'multi4in1' with 'multi4in1-devel' in the FQBN.
+'Devel' boards can be specified by appending '-devel' to the alias, or substituting 'multi4in1' with 'multi4in1-devel' in the FQBN.
