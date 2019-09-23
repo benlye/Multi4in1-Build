@@ -11,6 +11,7 @@ function showusage
     printf "Where:\n"
     printf "  [path to source] is the path to the folder where the Multiprotocol source was cloned or unzipped\n"
     printf "  [board] is the FQBN of the desired board\n\n"
+    printf "If no board is speciifed then 'multi4in1:STM32F1:multistm32f103c:debug_option=none' will be used.\n\n"
     printf "Example:\n"
     printf "  docker run --rm -it -v \"C:\\Users\\benlye\\Downloads\\DIY-Multiprotocol-TX-Module:/multi\" -e \"BOARD=multi4in1:STM32F1:multistm32f103c:debug_option=none\" benlye/multi4in1-build\n\n"
     printf "Valid boards:\n"
@@ -32,11 +33,12 @@ if [ ! -f /multi/Multiprotocol/Multiprotocol.ino ]; then
     exit 1
 fi
 
-# Error if a board wasn't sepcified
+# Default to the STM32 if a board wasn't specified
 if [ "x" == "x$BOARD" ]; then
-    printf "ERROR: No board specified.\n\n"
-    showusage
-    exit 1
+    printf "No board specified, using board 'multi4in1:STM32F1:multistm32f103c:debug_option=none'.\n\n"
+    BOARD="multi4in1-devel:STM32F1:multistm32f103c"
+else
+    printf "Using board '$BOARD'\n\n"
 fi
 
 # Remap boards specified without options to the default option
@@ -90,8 +92,18 @@ cp do_version /root/.arduino15/packages/multi4in1/hardware/STM32F1/1.1.6/tools/l
 cp do_version /root/.arduino15/packages/multi4in1/hardware/avr/1.0.9/tools/linux
 cp do_version /root/.arduino15/packages/multi4in1/hardware/avr/1.0.9/tools/linux64
 
+# Get the firmware version number
+MAJOR_VERSION=$(grep "VERSION_MAJOR" "/multi/Multiprotocol/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
+MINOR_VERSION=$(grep "VERSION_MINOR" "/multi/Multiprotocol/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
+REVISION_VERSION=$(grep "VERSION_REVISION" "/multi/Multiprotocol/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
+PATCH_VERSION=$(grep "VERSION_PATCH" "/multi/Multiprotocol/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
+MULTI_VERSION=$MAJOR_VERSION.$MINOR_VERSION.$REVISION_VERSION.$PATCH_VERSION
+
+# Output some information
+printf "\nBuilding firmware version v$MULTI_VERSION ...\n\n"
+
 # Compile the firmware
-printf "\nCompiling the Multi4in1 firmware ...\n"
+printf "arduino-cli compile -b $BOARD /tmp/build/Multiprotocol/Multiprotocol.ino --build-path /build/output\n"
 arduino-cli compile -b $BOARD /tmp/build/Multiprotocol/Multiprotocol.ino --build-path /build/output
 
 if [ $? -eq 0 ]; then
