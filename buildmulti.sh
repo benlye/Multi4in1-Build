@@ -37,11 +37,15 @@ case "$BOARD" in
     "avr")
         ;&
     "multi4in1:avr:multiatmega328p")
+        ;&
+    "multi4in1:avr:multiatmega328p:bootloader=none")
         BOARD="multi4in1:avr:multiatmega328p:bootloader=none"
         ;;
     "avr-devel")
         ;&
     "multi4in1-devel:avr:multiatmega328p")
+        ;&
+    "multi4in1-devel:avr:multiatmega328p:bootloader=none")
         BOARD="multi4in1-devel:avr:multiatmega328p:bootloader=none"
         ;;
     "avr-boot")
@@ -53,11 +57,15 @@ case "$BOARD" in
     "stm32")
         ;&
     "multi4in1:STM32F1:multistm32f103c")
+        ;&
+    "multi4in1:STM32F1:multistm32f103c:debug_option=none")
         BOARD="multi4in1:STM32F1:multistm32f103c:debug_option=none"
         ;;
     "stm32-devel")
         ;&
     "multi4in1-devel:STM32F1:multistm32f103c")
+        ;&
+    "multi4in1-devel:STM32F1:multistm32f103c:debug_option=none")
         BOARD="multi4in1-devel:STM32F1:multistm32f103c:debug_option=none"
         ;;
     "stm32-usbdebug")
@@ -73,9 +81,13 @@ case "$BOARD" in
         BOARD="multi4in1-devel:STM32F1:multistm32f103c:debug_option=ftdi"
         ;;
     "orx")
+        ;&
+    "multi4in1:avr:multixmega32d4")
         BOARD="multi4in1:avr:multixmega32d4"
         ;;
     "orx-devel")
+        ;&
+    "multi4in1-devel:avr:multixmega32d4")
         BOARD="multi4in1-devel:avr:multixmega32d4"
         ;;
     "")
