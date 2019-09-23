@@ -69,15 +69,23 @@ case "$BOARD" in
         BOARD="multi4in1-devel:STM32F1:multistm32f103c:debug_option=none"
         ;;
     "stm32-usbdebug")
+        ;&
+    "multi4in1:STM32F1:multistm32f103c:debug_option=native")
         BOARD="multi4in1:STM32F1:multistm32f103c:debug_option=native"
         ;;
     "stm32-usbdebug-devel")
+        ;&
+    "multi4in1-devel:STM32F1:multistm32f103c:debug_option=native")
         BOARD="multi4in1-devel:STM32F1:multistm32f103c:debug_option=native"
         ;;
     "stm32-ftdidebug")
+        ;&
+    "multi4in1:STM32F1:multistm32f103c:debug_option=ftdi")
         BOARD="multi4in1:STM32F1:multistm32f103c:debug_option=ftdi"
         ;;
     "stm32-ftdidebug-devel")
+        ;&
+    "multi4in1-devel:STM32F1:multistm32f103c:debug_option=ftdi")
         BOARD="multi4in1-devel:STM32F1:multistm32f103c:debug_option=ftdi"
         ;;
     "orx")
