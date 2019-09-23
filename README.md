@@ -19,9 +19,7 @@ The container contains a Debian Linux image pre-configured with the tools requir
    `git clone https://github.com/pascallanger/DIY-Multiprotocol-TX-Module.git`
 
 ## Modify the Firmware
-Use your tool of choice to make changes to the Multiprotocol Module firmware source.
-
-([Visual Studio Code](https://code.visualstudio.com/download) is a good option).
+Use your tool of choice to make changes to the Multiprotocol Module firmware source.  [Visual Studio Code](https://code.visualstudio.com/download) is a good option.
 
 ## Build the Firmware
 1. Run the container, specifying the path to the Multiprotocol firmware source as a mount volume and the board type as an enviroment variable:
@@ -30,27 +28,26 @@ Use your tool of choice to make changes to the Multiprotocol Module firmware sou
    
    For example (Windows):
    
-   `docker run --rm -it -v "C:\Users\benlye\Github\DIY-Multiprotocol-TX-Module\Multiprotocol:/multi" -e "BOARD=multi4in1:STM32F1:multistm32f103c" benlye/multi4in1-build`
+   `docker run --rm -it -v "C:\Users\benlye\Github\DIY-Multiprotocol-TX-Module\Multiprotocol:/multi" -e "BOARD=stm32" benlye/multi4in1-build`
    
    Or (Linux):
    
-   `docker run --rm -it -v "/home/benlye/github/DIY-Multiprotocol-TX-Module/Multiprotocol:/multi" -e "BOARD=multi4in1:STM32F1:multistm32f103c" benlye/multi4in1-build`
+   `docker run --rm -it -v "/home/benlye/github/DIY-Multiprotocol-TX-Module/Multiprotocol:/multi" -e "BOARD=stm32" benlye/multi4in1-build`
 
 The compiled firmware image will be placed in the root of the source directory when the build has finished.  
 
 ## Boards
+Board names and aliases are case sensitive.
+
 Board options are:
 
-### STM32 Boards
-* `multi4in1:STM32F1:multistm32f103c` - Same as **Debug Option** => **None**
-* `multi4in1:STM32F1:multistm32f103c:debug_option=none` - Equivalent to IDE setting **Debug Option** => **None**
-* `multi4in1:STM32F1:multistm32f103c:debug_option=native` - Enable debug output on the native USB port; equivalent to IDE setting **Debug Option** => **Native USB Debugging**
-* `multi4in1:STM32F1:multistm32f103c:debug_option=ftdi` - Enable debug output on an FTDI adapter; equivalent to IDE setting **Debug Option** => **Serial/FTDI Debugging**
+| Board Type | Alias | FQBN | Equivalent IDE Option |
+| --- | --- | --- | --- |
+| AVR | avr | multi4in1:avr:multiatmega328p | Bootloader => None |
+| AVR | avr-optiboot | multi4in1:avr:multiatmega328p:bootloader=optiboot | Bootloader => Optiboot |
+| STM32 | stm32 | multi4in1:STM32F1:multistm32f103c | Debug Option => None |
+| STM32 | stm32-usbdebug | multi4in1:STM32F1:multistm32f103c:debug_option=native | Debug Option => Native USB Debugging |
+| STM32 | stm32-ftdidebug | multi4in1:STM32F1:multistm32f103c:debug_option=ftdi | Debug Option => FTDI Debugging |
+| OrangeRX | orx | multi4in1:avr:multixmega32d4 | |
 
-### ATmega328p Boards
-* `multi4in1:avr:multiatmega328p` - Same as **Bootloader** => **None**
-* `multi4in1:avr:multiatmega328p:bootloader=none` - Equivalent to IDE setting **Bootloader** => **None**
-* `multi4in1:avr:multiatmega328p:bootloader=optiboot` - Equivalent to IDE setting **Bootloader** => **Optiboot**
-
-### OrangeRX
-* `multi4in1:avr:multixmega32d4`
+'Devel' boards can be specified by appending '-devel' to the alias of substituting 'multi4in1' with 'multi4in1-devel' in the FQBN.
