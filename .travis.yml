@@ -13,8 +13,8 @@ env:
     - BOARD="multi4in1:STM32F1:multistm32f103c:debug_option=native"
     - BOARD="multi4in1:STM32F1:multistm32f103c:debug_option=ftdi"
     - BOARD="multi4in1:avr:multixmega32d4"
-    - BOARD="avr"
-    - BOARD="avr-optiboot"
+#    - BOARD="avr"
+#    - BOARD="avr-optiboot"
     - BOARD="stm32"
     - BOARD="stm32-usbdebug"
     - BOARD="stm32-ftdidebug"
@@ -47,7 +47,7 @@ before_script:
   - runBuild() { exitcode=0; start_fold $1; travis_time_start; echo "docker run --rm -it -v /tmp/multifw:/multi -e \"BOARD=$1\"  benlye/multi4in1-build"; docker run --rm -it -v /tmp/multifw:/multi -e "BOARD=$1" benlye/multi4in1-build; exitcode=$?; end_fold $1; echo; return $exitcode; }
 
 script:
-  - runBuild
+  - runBuild $BOARD
 #  - runBuild "multi4in1:avr:multiatmega328p
 #  - runBuild "multi4in1:avr:multiatmega328p:bootloader=none"
 #  - runBuild "multi4in1:avr:multiatmega328p:bootloader=optiboot"
