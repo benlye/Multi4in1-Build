@@ -35,10 +35,8 @@ fi
 
 # Default to the STM32 if a board wasn't specified
 if [ "x" == "x$BOARD" ]; then
-    printf "No board specified, using board 'multi4in1:STM32F1:multistm32f103c:debug_option=none'.\n\n"
+    printf "No board specified, defaulting to 'multi4in1:STM32F1:multistm32f103c:debug_option=none'.\n\n"
     BOARD="multi4in1-devel:STM32F1:multistm32f103c"
-else
-    printf "Using board '$BOARD'\n\n"
 fi
 
 # Remap boards specified without options to the default option
@@ -103,7 +101,7 @@ MULTI_VERSION=$MAJOR_VERSION.$MINOR_VERSION.$REVISION_VERSION.$PATCH_VERSION
 printf "\nBuilding firmware version v$MULTI_VERSION ...\n\n"
 
 # Compile the firmware
-printf "arduino-cli compile -b $BOARD /tmp/build/Multiprotocol/Multiprotocol.ino --build-path /build/output\n"
+printf "arduino-cli compile -b $BOARD /tmp/build/Multiprotocol/Multiprotocol.ino --build-path /build/output\n\n"
 arduino-cli compile -b $BOARD /tmp/build/Multiprotocol/Multiprotocol.ino --build-path /build/output
 
 if [ $? -eq 0 ]; then
