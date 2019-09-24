@@ -49,12 +49,12 @@ case "$BOARD" in
         BOARD="multi4in1-devel:avr:multiatmega328p:bootloader=none"
         ;;
     "avr-optiboot")
-        &;
+        ;&
     "multi4in1:avr:multiatmega328p:bootloader=optiboot")
         BOARD="multi4in1:avr:multiatmega328p:bootloader=optiboot"
         ;;
     "avr-bootopti-devel")
-        &;
+        ;&
     "multi4in1-devel:avr:multiatmega328p:bootloader=optiboot")
         BOARD="multi4in1-devel:avr:multiatmega328p:bootloader=optiboot"
         ;;
