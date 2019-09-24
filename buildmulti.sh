@@ -48,10 +48,14 @@ case "$BOARD" in
     "multi4in1-devel:avr:multiatmega328p:bootloader=none")
         BOARD="multi4in1-devel:avr:multiatmega328p:bootloader=none"
         ;;
-    "avr-boot")
+    "avr-optiboot")
+        &;
+    "multi4in1:avr:multiatmega328p:bootloader=optiboot")
         BOARD="multi4in1:avr:multiatmega328p:bootloader=optiboot"
         ;;
-    "avr-boot-devel")
+    "avr-bootopti-devel")
+        &;
+    "multi4in1-devel:avr:multiatmega328p:bootloader=optiboot")
         BOARD="multi4in1-devel:avr:multiatmega328p:bootloader=optiboot"
         ;;
     "stm32")
@@ -162,6 +166,7 @@ if [ $? -eq 0 ]; then
     printf "\n\e[92mCompiled Multiprotocol firmware saved as '/multi/Multiprotocol/$FWBINFILE'.\e[0m\n"
 else
     printf "\n\e[91mBuild failed.\e[0m\n\n"
+    exit 1
 fi
 
 printf "\n"
