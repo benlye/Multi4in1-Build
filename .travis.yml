@@ -2,8 +2,6 @@ dist: trusty
 sudo: true
 
 env:
-  global:
-    - IDE_VERSION=1.8.9
   matrix:
     - BOARD="multi4in1:avr:multiatmega328p"
     - BOARD="multi4in1:avr:multiatmega328p:bootloader=none"
@@ -30,16 +28,16 @@ notifications:
 
 before_install:
   - git clone --recursive https://github.com/pascallanger/DIY-Multiprotocol-TX-Module.git /tmp/multifw
-  - ls -al /tmp/multifw/
   
 install:
   - cd ${TRAVIS_BUILD_DIR}
-  - ls -al
   - docker build -t benlye/multi4in1-build .
 
 before_script:
   - SED=$(which gsed || which sed)
   - SRCPATH=/tmp/multifw/Multiprotocol
+  - optenable() { for opt in "$@" ; do eval "${SED} -i 's/\/\{2,\}[[:blank:]]*\(#define[[:blank:]]*\b${opt}\b\)/\1/g' $SRCPATH/_Config.h"; done }
+  - optdisable() { for opt in "$@" ; do eval "${SED} -i 's/^\([[:blank:]]*\)\(#define[[:blank:]]*\b${opt}\b\)/\1\/\/\2/g' $SRCPATH/_Config.h"; done }
   - A7105_PROTOCOLS=$(sed -n 's/[\/\/]*[[:blank:]]*#define[[:blank:]]*\([[:alnum:]_]*_A7105_INO\)\(.*\)/\1/p' $SRCPATH/_Config.h)
   - CC2500_PROTOCOLS=$(sed -n 's/[\/\/]*[[:blank:]]*#define[[:blank:]]*\([[:alnum:]_]*_CC2500_INO\)\(.*\)/\1/p' $SRCPATH/_Config.h)
   - CYRF6936_PROTOCOLS=$(sed -n 's/[\/\/]*[[:blank:]]*#define[[:blank:]]*\([[:alnum:]_]*_CYRF6936_INO\)\(.*\)/\1/p' $SRCPATH/_Config.h)
@@ -50,10 +48,6 @@ before_script:
       ALL_PROTOCOLS=$(echo $A7105_PROTOCOLS $CC2500_PROTOCOLS $CYRF6936_PROTOCOLS $NRF24L01_PROTOCOLS);
     fi
   - echo $ALL_PROTOCOLS
-  - optenable() { for opt in "$@" ; do eval "${SED} -i 's/\/\{2,\}[[:blank:]]*\(#define[[:blank:]]*\b${opt}\b\)/\1/g' $SRCPATH/_Config.h"; done }
-  - optdisable() { for opt in "$@" ; do eval "${SED} -i 's/^\([[:blank:]]*\)\(#define[[:blank:]]*\b${opt}\b\)/\1\/\/\2/g' $SRCPATH/_Config.h"; done }
-  
-  # Trim the build down for the Atmega328p board
   - if [[ "$BOARD" =~ *"\:avr\:multiatmega328p\:"* ]] || [[ "$BOARD" =~ "avr-"* ]]; then
       optdisable $ALL_PROTOCOLS;
       optenable FRSKYX_CC2500_INO AFHDS2A_A7105_INO MJXQ_NRF24L01_INO DSM_CYRF6936_INO;
