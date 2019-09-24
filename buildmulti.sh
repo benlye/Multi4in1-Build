@@ -9,7 +9,7 @@ function showusage
     printf "  docker run --rm -it -v \"[path to source]:/multi\" -e \"BOARD=[board]\" benlye/multi4in1-build\n\n"
     printf "Where:\n"
     printf "  [path to source] is the path to the folder where the Multiprotocol source was cloned or unzipped\n"
-    printf "  [board] case-sensitive is the FQBN or alias of the desired board\n\n"
+    printf "  [board] case-sensitive FQBN or alias of the desired board\n\n"
     printf "Valid boards:\n"
     printf "  Type     | Alias           | FQBN\n"
     printf "  ---------|-----------------|------------------------------------------------------\n"
