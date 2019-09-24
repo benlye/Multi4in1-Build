@@ -51,7 +51,7 @@ before_script:
     fi
   - echo $ALL_PROTOCOLS
   - optenable() { for opt in "$@" ; do eval "${SED} -i 's/\/\{2,\}[[:blank:]]*\(#define[[:blank:]]*\b${opt}\b\)/\1/g' $SRCPATH/_Config.h"; done }
-  - optdisable() { for opt in "$@" ; do eval "${SED} -i 's/^\([[:blank:]]*\)\(#define[[:blank:]]*\b${opt}\b\)/\1\/\/\2/g' $SRCPATH/_Config.h" done }
+  - optdisable() { for opt in "$@" ; do eval "${SED} -i 's/^\([[:blank:]]*\)\(#define[[:blank:]]*\b${opt}\b\)/\1\/\/\2/g' $SRCPATH/_Config.h"; done }
   
   # Trim the build down for the Atmega328p board
   - if [[ "$BOARD" =~ ":avr:multiatmega328p:" ]]; then
