@@ -6,16 +6,20 @@ env:
     - BOARD="multi4in1:avr:multiatmega328p"
     - BOARD="multi4in1:avr:multiatmega328p:bootloader=none"
     - BOARD="multi4in1:avr:multiatmega328p:bootloader=optiboot"
-    - BOARD="multi4in1:STM32F1:multistm32f103c"
-    - BOARD="multi4in1:STM32F1:multistm32f103c:debug_option=none"
-    - BOARD="multi4in1:STM32F1:multistm32f103c:debug_option=native"
-    - BOARD="multi4in1:STM32F1:multistm32f103c:debug_option=ftdi"
+    - BOARD="multi4in1:STM32F1:multistm32f103cb"
+    - BOARD="multi4in1:STM32F1:multistm32f103cb:debug_option=none"
+    - BOARD="multi4in1:STM32F1:multistm32f103cb:debug_option=native"
+    - BOARD="multi4in1:STM32F1:multistm32f103cb:debug_option=ftdi"
+    - BOARD="multi4in1:STM32F1:multistm32f103c8:debug_option=none"
+    - BOARD="multi4in1:STM32F1:multi5in1t18int"
     - BOARD="multi4in1:avr:multixmega32d4"
     - BOARD="avr"
     - BOARD="avr-optiboot"
     - BOARD="stm32"
     - BOARD="stm32-usbdebug"
     - BOARD="stm32-ftdidebug"
+    - BOARD="stm32-64"
+    - BOARD="t18-5in1"
     - BOARD="orx"
 
 language: c
@@ -51,6 +55,10 @@ before_script:
   - if [[ "$BOARD" =~ *"\:avr\:multiatmega328p\:"* ]] || [[ "$BOARD" =~ "avr-"* ]]; then
       optdisable $ALL_PROTOCOLS;
       optenable FRSKYX_CC2500_INO AFHDS2A_A7105_INO MJXQ_NRF24L01_INO DSM_CYRF6936_INO;
+    fi
+  - if [[ "$BOARD" =~ ":STM32F1:multistm32f103cb:debug_option=ftdi" ]] || [[ "$BOARD" =~ ":STM32F1:multistm32f103cb:debug_option=native" ]] || [[ "$BOARD" =~ ":STM32F1:multistm32f103c8" ]]; then
+      opt_disable $ALL_PROTOCOLS;
+      opt_enable FRSKYX_CC2500_INO AFHDS2A_A7105_INO MJXQ_NRF24L01_INO DSM_CYRF6936_INO;
     fi
 
 script:

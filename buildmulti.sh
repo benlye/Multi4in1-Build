@@ -11,17 +11,19 @@ function showusage
     printf "  [path to source] is the path to the folder where the Multiprotocol source was cloned or unzipped\n"
     printf "  [board] case-sensitive FQBN or alias of the desired board\n\n"
     printf "Valid boards:\n"
-    printf "  Type     | Alias           | FQBN\n"
-    printf "  ---------|-----------------|------------------------------------------------------\n"
-    printf "  AVR      | avr             | multi4in1:avr:multiatmega328p:bootloader=none\n"
-    printf "  AVR      | avr-boot        | multi4in1:avr:multiatmega328p:bootloader=optiboot\n"
-    printf "  STM32    | stm32           | multi4in1:STM32F1:multistm32f103c:debug_option=none\n"
-    printf "  STM32    | stm32-usbdebug  | multi4in1:STM32F1:multistm32f103c:debug_option=native\n"
-    printf "  STM32    | stm32-ftdidebug | multi4in1:STM32F1:multistm32f103c:debug_option=ftdi\n"
-    printf "  OrangeRX | orx             | multi4in1:avr:multixmega32d4\n\n"
+    printf "  Type        | Alias           | FQBN\n"
+    printf "  ------------|-----------------|------------------------------------------------------\n"
+    printf "  AVR         | avr             | multi4in1:avr:multiatmega328p:bootloader=none\n"
+    printf "  AVR         | avr-boot        | multi4in1:avr:multiatmega328p:bootloader=optiboot\n"
+    printf "  STM32 128KB | stm32           | multi4in1:STM32F1:multistm32f103cb:debug_option=none\n"
+    printf "  STM32 128KB | stm32-usbdebug  | multi4in1:STM32F1:multistm32f103cb:debug_option=native\n"
+    printf "  STM32 128KB | stm32-ftdidebug | multi4in1:STM32F1:multistm32f103cb:debug_option=ftdi\n"
+    printf "  STM32 64KB  | stm32-64        | multi4in1:STM32F1:multistm32f103c8:debug_option=none\n"
+    printf "  T18 5in1    | t18-5in1        | multi4in1:STM32F1:multi5in1t18int\n"
+    printf "  OrangeRX    | orx             | multi4in1:avr:multixmega32d4\n\n"
     printf "Examples:\n"
     printf '  docker run --rm -it -v \"C:\\Users\\benlye\\Downloads\\DIY-Multiprotocol-TX-Module:/multi\" -e \"BOARD=stm32\" benlye/multi4in1-build\n\n'
-    printf '  docker run --rm -it -v \"C:\\Users\\benlye\\Downloads\\DIY-Multiprotocol-TX-Module:/multi\" -e \"BOARD=multi4in1:STM32F1:multistm32f103c:debug_option=native\" benlye/multi4in1-build\n\n'
+    printf '  docker run --rm -it -v \"C:\\Users\\benlye\\Downloads\\DIY-Multiprotocol-TX-Module:/multi\" -e \"BOARD=multi4in1:STM32F1:multistm32f103cb:debug_option=native\" benlye/multi4in1-build\n\n'
     printf "'Devel' boards can be specified by appending '-devel' to the alias (e.g. 'stm32-devel') or replacing 'multi' with 'multi-devel' in the FQBN.\n\n"
 }
 
@@ -62,35 +64,55 @@ case "$BOARD" in
         ;&
     "multi4in1:STM32F1:multistm32f103c")
         ;&
-    "multi4in1:STM32F1:multistm32f103c:debug_option=none")
-        BOARD="multi4in1:STM32F1:multistm32f103c:debug_option=none"
+    "multi4in1:STM32F1:multistm32f103cb:debug_option=none")
+        BOARD="multi4in1:STM32F1:multistm32f103cb:debug_option=none"
         ;;
     "stm32-devel")
         ;&
     "multi4in1-devel:STM32F1:multistm32f103c")
         ;&
-    "multi4in1-devel:STM32F1:multistm32f103c:debug_option=none")
-        BOARD="multi4in1-devel:STM32F1:multistm32f103c:debug_option=none"
+    "multi4in1-devel:STM32F1:multistm32f103cb:debug_option=none")
+        BOARD="multi4in1-devel:STM32F1:multistm32f103cb:debug_option=none"
         ;;
     "stm32-usbdebug")
         ;&
-    "multi4in1:STM32F1:multistm32f103c:debug_option=native")
-        BOARD="multi4in1:STM32F1:multistm32f103c:debug_option=native"
+    "multi4in1:STM32F1:multistm32f103cb:debug_option=native")
+        BOARD="multi4in1:STM32F1:multistm32f103cb:debug_option=native"
         ;;
     "stm32-usbdebug-devel")
         ;&
-    "multi4in1-devel:STM32F1:multistm32f103c:debug_option=native")
-        BOARD="multi4in1-devel:STM32F1:multistm32f103c:debug_option=native"
+    "multi4in1-devel:STM32F1:multistm32f103cb:debug_option=native")
+        BOARD="multi4in1-devel:STM32F1:multistm32f103cb:debug_option=native"
         ;;
     "stm32-ftdidebug")
         ;&
-    "multi4in1:STM32F1:multistm32f103c:debug_option=ftdi")
-        BOARD="multi4in1:STM32F1:multistm32f103c:debug_option=ftdi"
+    "multi4in1:STM32F1:multistm32f103cb:debug_option=ftdi")
+        BOARD="multi4in1:STM32F1:multistm32f103cb:debug_option=ftdi"
         ;;
     "stm32-ftdidebug-devel")
         ;&
-    "multi4in1-devel:STM32F1:multistm32f103c:debug_option=ftdi")
-        BOARD="multi4in1-devel:STM32F1:multistm32f103c:debug_option=ftdi"
+    "multi4in1-devel:STM32F1:multistm32f103cb:debug_option=ftdi")
+        BOARD="multi4in1-devel:STM32F1:multistm32f103cb:debug_option=ftdi"
+        ;;
+    "stm32-64")
+        ;&
+    "multi4in1:STM32F1:multistm32f103c8:debug_option=none")
+        BOARD="multi4in1:STM32F1:multistm32f103c8:debug_option=none"
+        ;;
+    "stm32-64-devel")
+        ;&
+    "multi4in1-devel:STM32F1:multistm32f103c8:debug_option=none")
+        BOARD="multi4in1-devel:STM32F1:multistm32f103c8:debug_option=none"
+        ;;
+    "t18-5in1")
+        ;&
+    "multi4in1:STM32F1:multi5in1t18int")
+        BOARD="multi4in1:STM32F1:multi5in1t18int"
+        ;;
+    "t18-5in1-devel")
+        ;&
+    "multi4in1-devel:STM32F1:multi5in1t18int")
+        BOARD="multi4in1-devel:STM32F1:multi5in1t18int"
         ;;
     "orx")
         ;&
@@ -113,36 +135,18 @@ case "$BOARD" in
         exit 1
 esac
 
-# Check for an update for the specified board
+# Check for updates
 printf "Checking for Multi4in1 board package updates ...\n"
 
 # Update the package index
 arduino-cli core update-index > /dev/nul
 
-# Update the board we're using, if needed
-if [[ "$BOARD" == multi4in1:avr* ]]; then
-    arduino-cli core upgrade multi4in1:avr
-fi
-if [[ "$BOARD" == multi4in1:STM32F1* ]]; then
-    arduino-cli core upgrade multi4in1:STM32F1
-fi
-if [[ "$BOARD" == multi4in1-devel:avr* ]]; then
-    arduino-cli core upgrade multi4in1-devel:avr
-fi
-if [[ "$BOARD" == multi4in1-devel:STM32F1* ]]; then
-    arduino-cli core upgrade multi4in1-devel:STM32F1
-fi
+# Update the cores
+arduino-cli core upgrade
 
 # Make a copy of the firmware source
 mkdir /tmp/build
 cp -r /multi/Multiprotocol /tmp/build/
-
-# Temporary fix for broken do_version script
-dos2unix -q do_version
-cp do_version /root/.arduino15/packages/multi4in1/hardware/STM32F1/1.1.6/tools/linux
-cp do_version /root/.arduino15/packages/multi4in1/hardware/STM32F1/1.1.6/tools/linux64
-cp do_version /root/.arduino15/packages/multi4in1/hardware/avr/1.0.9/tools/linux
-cp do_version /root/.arduino15/packages/multi4in1/hardware/avr/1.0.9/tools/linux64
 
 # Get the firmware version number
 MAJOR_VERSION=$(grep "VERSION_MAJOR" "/multi/Multiprotocol/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
