@@ -1,7 +1,7 @@
 # Multi4in1-Build
-A Docker container for building the firmware for the Multiprotocol TX Module.
+![Build Status](https://github.com/benlye/Multi4in1-Build/actions/workflows/main.yml/badge.svg?branch=master)
 
-[![Build Status](https://travis-ci.org/benlye/Multi4in1-Build.svg?branch=master)](https://travis-ci.org/benlye/Multi4in1-Build)
+A Docker container for building the firmware for the Multiprotocol TX Module.
 
 The container contains a Debian Linux image pre-configured with the tools required to build the Multiprotocol TX Module firmware.  Running the container will compile the firmware from a local source tree and produce a compiled firmware image.
 
@@ -45,9 +45,11 @@ Board options are:
 | --- | --- | --- | --- |
 | AVR | avr | `multi4in1:avr:multiatmega328p` | Bootloader => None |
 | AVR | avr-optiboot | `multi4in1:avr:multiatmega328p:bootloader=optiboot` | Bootloader => Optiboot |
-| STM32 | stm32 | `multi4in1:STM32F1:multistm32f103c` | Debug Option => None |
-| STM32 | stm32-usbdebug | `multi4in1:STM32F1:multistm32f103c:debug_option=native` | Debug Option => Native USB Debugging |
-| STM32 | stm32-ftdidebug | `multi4in1:STM32F1:multistm32f103c:debug_option=ftdi` | Debug Option => FTDI Debugging |
+| STM32 128KB | stm32 | `multi4in1:STM32F1:multistm32f103cb` | Debug Option => None |
+| STM32 128KB | stm32-usbdebug | `multi4in1:STM32F1:multistm32f103cb:debug_option=native` | Debug Option => Native USB Debugging |
+| STM32 128KB | stm32-ftdidebug | `multi4in1:STM32F1:multistm32f103cb:debug_option=ftdi` | Debug Option => FTDI Debugging |
+| STM32 64KB | stm32-64 | `multi4in1:STM32F1:multistm32f103c8` | |
+| T18 5in1 | t18-5in1 | `multi4in1:STM32F1:multi5in1t18int` | |
 | OrangeRX | orx | `multi4in1:avr:multixmega32d4` | |
 
 'Devel' boards can be specified by appending '-devel' to the alias, or substituting 'multi4in1' with 'multi4in1-devel' in the FQBN.
