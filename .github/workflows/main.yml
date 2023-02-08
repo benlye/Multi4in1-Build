@@ -1,0 +1,219 @@
+# Workfolow for testing the MULTI-Module build container
+
+name: Container Tests
+
+on:
+  # Trigger the workflow on pushes, except those that are tagged (avoids double-testing releases)
+  push:
+    branches:
+    - '**'
+    tags-ignore:
+      - '**'
+
+  # Trigger the workflow on pull requests to the master branch
+  pull_request:
+    branches:
+      - master
+
+  # Triggers the workflow on release creation
+  release:
+    types:
+      - created
+
+  # Allows the workflow to be triggered manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+
+  # Build the docker container and upload it as an artifact for subsequent jobs
+  prepare:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Build the Docker container
+        run: docker build -t benlye/multi4in1-build .
+      
+      - name: Upload container image
+        uses: ishworkh/docker-image-artifact-upload@v1
+        with:
+          image: "benlye/multi4in1-build"
+          retention_days: "1"
+
+  # Use a matrix of boards to run the tests
+  test:
+    needs: prepare
+    runs-on: ubuntu-latest
+
+    # Configure the board matrix
+    strategy:
+      fail-fast: false
+      matrix:
+        board: [
+          "avr",
+          "multi4in1:avr:multiatmega328p:bootloader=none",
+          "avr-devel",
+          "multi4in1-devel:avr:multiatmega328p:bootloader=none",
+          "avr-optiboot",
+          "multi4in1:avr:multiatmega328p:bootloader=optiboot",
+          "avr-optiboot-devel",
+          "multi4in1-devel:avr:multiatmega328p:bootloader=optiboot",
+          "stm32",
+          "multi4in1:STM32F1:multistm32f103cb:debug_option=none",
+          "stm32-devel",
+          "multi4in1-devel:STM32F1:multistm32f103cb:debug_option=none",
+          "stm32-usbdebug",
+          "multi4in1:STM32F1:multistm32f103cb:debug_option=native",
+          "stm32-usbdebug-devel",
+          "multi4in1-devel:STM32F1:multistm32f103cb:debug_option=native",
+          "stm32-ftdidebug",
+          "multi4in1:STM32F1:multistm32f103cb:debug_option=ftdi",
+          "stm32-ftdidebug-devel",
+          "multi4in1-devel:STM32F1:multistm32f103cb:debug_option=ftdi",
+          "stm32-64",
+          "multi4in1:STM32F1:multistm32f103c8:debug_option=none",
+          "stm32-64-devel",
+          "multi4in1:STM32F1:multistm32f103c8:debug_option=none",
+          "t18-5in1",
+          "multi4in1:STM32F1:multi5in1t18int",
+          "t18-5in1-devel",
+          "multi4in1-devel:STM32F1:multi5in1t18int",
+          "orx",
+          "multi4in1:avr:multixmega32d4",
+          "orx-devel",
+          "multi4in1-devel:avr:multixmega32d4",
+        ]
+
+    # Set the environment variables
+    env:
+      BOARD: ${{ matrix.board }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Download Docker image
+        uses: ishworkh/docker-image-artifact-download@v1
+        with:
+          image: "benlye/multi4in1-build"
+
+      - name: Clone MULTI-Module firmware source at latest tag
+        run: |
+          git clone https://github.com/pascallanger/DIY-Multiprotocol-TX-Module.git
+          cd DIY-Multiprotocol-TX-Module
+          git -c advice.detachedHead=false checkout $(git describe --tags $(git rev-list --tags --max-count=1))
+          cd ..
+
+      - name: Set up the environment
+        run: |
+
+          # Update the path and load the build functions from the MULTI-Module source
+          chmod +x ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/buildroot/bin/*
+          echo "${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/buildroot/bin" >> $GITHUB_PATH
+
+      - name: Configure environment variables
+        run: |
+
+          # CD to the MULTI-Module source
+          cd DIY-Multiprotocol-TX-Module
+
+          # Get all the protocols
+          A7105_PROTOCOLS=$(sed -n 's/[\/\/]*[[:blank:]]*#define[[:blank:]]*\([[:alnum:]_]*_A7105_INO\)\(.*\)/\1/p' Multiprotocol/_Config.h)
+          CC2500_PROTOCOLS=$(sed -n 's/[\/\/]*[[:blank:]]*#define[[:blank:]]*\([[:alnum:]_]*_CC2500_INO\)\(.*\)/\1/p' Multiprotocol/_Config.h)
+          CYRF6936_PROTOCOLS=$(sed -n 's/[\/\/]*[[:blank:]]*#define[[:blank:]]*\([[:alnum:]_]*_CYRF6936_INO\)\(.*\)/\1/p' Multiprotocol/_Config.h)
+          NRF24L01_PROTOCOLS=$(sed -n 's/[\/\/]*[[:blank:]]*#define[[:blank:]]*\([[:alnum:]_]*_NRF24L01_INO\)\(.*\)/\1/p' Multiprotocol/_Config.h)
+          CCNRF_PROTOCOLS=$(sed -n 's/[\/\/]*[[:blank:]]*#define[[:blank:]]*\([[:alnum:]_]*_CCNRF_INO\)\(.*\)/\1/p' Multiprotocol/_Config.h)
+          SX1276_PROTOCOLS=$(sed -n 's/[\/\/]*[[:blank:]]*#define[[:blank:]]*\([[:alnum:]_]*_SX1276_INO\)\(.*\)/\1/p' Multiprotocol/_Config.h)
+
+          if [[ "$BOARD" =~ ":avr:multixmega32d4" ]] || [[ "$BOARD" =~ "orx" ]]; then
+              ALL_PROTOCOLS=$(echo $CYRF6936_PROTOCOLS);
+          elif [[ "$BOARD" =~ ":avr:multiatmega328p:" ]] || [[ "$BOARD" == "avr" ]] || [[ "$BOARD" =~ "avr-" ]]; then
+              ALL_PROTOCOLS=$(echo $A7105_PROTOCOLS $CC2500_PROTOCOLS $CYRF6936_PROTOCOLS $NRF24L01_PROTOCOLS $CCNRF_PROTOCOLS);
+          elif [[ "$BOARD" =~ ":STM32F1:" ]] || [[ "$BOARD" =~ "stm32" ]]; then
+              ALL_PROTOCOLS=$(echo $A7105_PROTOCOLS $CC2500_PROTOCOLS $CYRF6936_PROTOCOLS $NRF24L01_PROTOCOLS $CCNRF_PROTOCOLS $SX1276_PROTOCOLS);
+          fi
+
+          echo "A7105_PROTOCOLS=$(echo $A7105_PROTOCOLS)" >> $GITHUB_ENV
+          echo "CC2500_PROTOCOLS=$(echo $CC2500_PROTOCOLS)" >> $GITHUB_ENV
+          echo "CYRF6936_PROTOCOLS=$(echo $CYRF6936_PROTOCOLS)" >> $GITHUB_ENV
+          echo "NRF24L01_PROTOCOLS=$(echo $NRF24L01_PROTOCOLS)" >> $GITHUB_ENV
+          echo "SX1276_PROTOCOLS=$(echo $SX1276_PROTOCOLS)" >> $GITHUB_ENV
+          echo "CCNRF_PROTOCOLS=$(echo $CCNRF_PROTOCOLS)" >> $GITHUB_ENV
+          echo "ALL_PROTOCOLS=$(echo $ALL_PROTOCOLS)" >> $GITHUB_ENV
+
+          cd ..
+
+      - name: Configure the MULTI-Module firmware options
+        run: |
+
+          # CD to the MULTI-Module source
+          cd DIY-Multiprotocol-TX-Module
+
+          # Disable CHECK_FOR_BOOTLOADER when not needed
+          if [[ "$BOARD" =~ ":avr:multiatmega328p:bootloader=none" ]] || [[ "$BOARD" == "avr" ]] || [[ "$BOARD" == "avr-devel" ]]; then
+            opt_disable CHECK_FOR_BOOTLOADER;
+          fi
+
+          # Trim the build down for the Atmega328p board
+          if [[ "$BOARD" =~ ":avr:multiatmega328p:" ]] || [[ "$BOARD" == "avr" ]] || [[ "$BOARD" =~ "avr-" ]]; then
+            opt_disable $ALL_PROTOCOLS
+            opt_enable FRSKYX_CC2500_INO AFHDS2A_A7105_INO MJXQ_NRF24L01_INO DSM_CYRF6936_INO;
+          fi
+
+          # Trim the enabled protocols down for the STM32F103CB board with debugging or the STM32F103C8 board in general
+          if [[ "$BOARD" =~ ":STM32F1:multistm32f103cb:debug_option=ftdi" ]] || [[ "$BOARD" =~ ":STM32F1:multistm32f103cb:debug_option=native" ]] || [[ "$BOARD" =~ ":STM32F1:multistm32f103c8" ]] || [[ "$BOARD" =~ "stm32-ftdidebug" ]] || [[ "$BOARD" =~ "stm32-usbdebug" ]] || [[ "$BOARD" =~ "stm32-64" ]]; then
+            opt_disable $ALL_PROTOCOLS;
+            opt_enable FRSKYX_CC2500_INO AFHDS2A_A7105_INO MJXQ_NRF24L01_INO DSM_CYRF6936_INO;
+          fi
+
+          # Disable PPM for STM32 builds
+          if [[ "$BOARD" =~ ":STM32F1:multistm32f103cb:" ]] || [[ "$BOARD" =~ "stm32" ]]; then
+            opt_disable ENABLE_PPM;
+          fi
+
+          # CD back to the working directory
+          cd ..
+
+      - name: Configuration diff
+        run: |
+          pushd ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module
+          echo ::group::_Config.h
+          git diff Multiprotocol/_Config.h
+          echo ::endgroup::
+          popd
+
+      - name: Run Docker build
+        run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=$BOARD" benlye/multi4in1-build
+
+  publish:
+    if: github.event_name == 'release' && github.event.action == 'created'
+    needs: [prepare, test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+      
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+     
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: benlye/multi4in1-build:latest
+
+  cleanup:
+    if: ${{ always() }}
+    needs: [prepare, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: geekyeggo/delete-artifact@v2
+        with:
+          name: "*"

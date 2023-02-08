@@ -1,9 +1,10 @@
-# A Debian image for compiling Multiprotocol TX Module firmare
-FROM debian:stretch
+# A container for compiling Multiprotocol TX Module firmare
+FROM ubuntu:22.04
 
 # Update and install the required components
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y update
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install curl dos2unix git
+RUN apt-get update
+RUN apt-get upgrade -y
+RUN apt-get install -y curl git
 
 # Retrieve and install the latest version of arduino-cli
 RUN curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/local/bin sh
@@ -31,9 +32,6 @@ VOLUME ["/multi"]
 
 # Add the build script
 COPY buildmulti.sh /build
-
-# Temporary do_version script
-COPY do_version /build
 
 # Run the shell script to build the firmware
 CMD ["bash", "-c", "/build/buildmulti.sh"]
