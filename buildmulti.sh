@@ -14,7 +14,7 @@ function showusage
     printf "  Type        | Alias           | FQBN\n"
     printf "  ------------|-----------------|------------------------------------------------------\n"
     printf "  AVR         | avr             | multi4in1:avr:multiatmega328p:bootloader=none\n"
-    printf "  AVR         | avr-boot        | multi4in1:avr:multiatmega328p:bootloader=optiboot\n"
+    printf "  AVR         | avr-optiboot    | multi4in1:avr:multiatmega328p:bootloader=optiboot\n"
     printf "  STM32 128KB | stm32           | multi4in1:STM32F1:multistm32f103cb:debug_option=none\n"
     printf "  STM32 128KB | stm32-usbdebug  | multi4in1:STM32F1:multistm32f103cb:debug_option=native\n"
     printf "  STM32 128KB | stm32-ftdidebug | multi4in1:STM32F1:multistm32f103cb:debug_option=ftdi\n"
@@ -55,7 +55,7 @@ case "$BOARD" in
     "multi4in1:avr:multiatmega328p:bootloader=optiboot")
         BOARD="multi4in1:avr:multiatmega328p:bootloader=optiboot"
         ;;
-    "avr-bootopti-devel")
+    "avr-optiboot-devel")
         ;&
     "multi4in1-devel:avr:multiatmega328p:bootloader=optiboot")
         BOARD="multi4in1-devel:avr:multiatmega328p:bootloader=optiboot"
