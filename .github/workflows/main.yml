@@ -189,13 +189,80 @@ jobs:
         run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=$BOARD" benlye/multi4in1-build
 
       - name: Run Docker build with versioned output file name
-        run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=multi-v{VERSION}.bin" benlye/multi4in1-build
+        run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=$BOARD" -e "FWBINNAME=multi-v{VERSION}.bin" benlye/multi4in1-build
 
-  # Run some test on one board
+  # Run some tests on one board
   test-other:
     needs: prepare
     runs-on: ubuntu-latest
     steps:
+      - name: Clone MULTI-Module firmware source at latest tag
+        run: |
+          git clone https://github.com/pascallanger/DIY-Multiprotocol-TX-Module.git
+          cd DIY-Multiprotocol-TX-Module
+          git -c advice.detachedHead=false checkout $(git describe --tags $(git rev-list --tags --max-count=1))
+          cd ..
+
+      - name: Set up the environment
+        run: |
+
+          # Update the path and load the build functions from the MULTI-Module source
+          chmod +x ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/buildroot/bin/*
+          echo "${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/buildroot/bin" >> $GITHUB_PATH
+
+      - name: Configure environment variables
+        run: |
+
+          # CD to the MULTI-Module source
+          cd DIY-Multiprotocol-TX-Module
+
+          # Get all the protocols
+          A7105_PROTOCOLS=$(sed -n 's/[\/\/]*[[:blank:]]*#define[[:blank:]]*\([[:alnum:]_]*_A7105_INO\)\(.*\)/\1/p' Multiprotocol/_Config.h)
+          CC2500_PROTOCOLS=$(sed -n 's/[\/\/]*[[:blank:]]*#define[[:blank:]]*\([[:alnum:]_]*_CC2500_INO\)\(.*\)/\1/p' Multiprotocol/_Config.h)
+          CYRF6936_PROTOCOLS=$(sed -n 's/[\/\/]*[[:blank:]]*#define[[:blank:]]*\([[:alnum:]_]*_CYRF6936_INO\)\(.*\)/\1/p' Multiprotocol/_Config.h)
+          NRF24L01_PROTOCOLS=$(sed -n 's/[\/\/]*[[:blank:]]*#define[[:blank:]]*\([[:alnum:]_]*_NRF24L01_INO\)\(.*\)/\1/p' Multiprotocol/_Config.h)
+          CCNRF_PROTOCOLS=$(sed -n 's/[\/\/]*[[:blank:]]*#define[[:blank:]]*\([[:alnum:]_]*_CCNRF_INO\)\(.*\)/\1/p' Multiprotocol/_Config.h)
+          SX1276_PROTOCOLS=$(sed -n 's/[\/\/]*[[:blank:]]*#define[[:blank:]]*\([[:alnum:]_]*_SX1276_INO\)\(.*\)/\1/p' Multiprotocol/_Config.h)
+
+          if [[ "$BOARD" =~ ":avr:multixmega32d4" ]] || [[ "$BOARD" =~ "orx" ]]; then
+              ALL_PROTOCOLS=$(echo $CYRF6936_PROTOCOLS);
+          elif [[ "$BOARD" =~ ":avr:multiatmega328p:" ]] || [[ "$BOARD" == "avr" ]] || [[ "$BOARD" =~ "avr-" ]]; then
+              ALL_PROTOCOLS=$(echo $A7105_PROTOCOLS $CC2500_PROTOCOLS $CYRF6936_PROTOCOLS $NRF24L01_PROTOCOLS $CCNRF_PROTOCOLS);
+          elif [[ "$BOARD" =~ ":STM32F1:" ]] || [[ "$BOARD" =~ "stm32" ]]; then
+              ALL_PROTOCOLS=$(echo $A7105_PROTOCOLS $CC2500_PROTOCOLS $CYRF6936_PROTOCOLS $NRF24L01_PROTOCOLS $CCNRF_PROTOCOLS $SX1276_PROTOCOLS);
+          fi
+
+          echo "A7105_PROTOCOLS=$(echo $A7105_PROTOCOLS)" >> $GITHUB_ENV
+          echo "CC2500_PROTOCOLS=$(echo $CC2500_PROTOCOLS)" >> $GITHUB_ENV
+          echo "CYRF6936_PROTOCOLS=$(echo $CYRF6936_PROTOCOLS)" >> $GITHUB_ENV
+          echo "NRF24L01_PROTOCOLS=$(echo $NRF24L01_PROTOCOLS)" >> $GITHUB_ENV
+          echo "SX1276_PROTOCOLS=$(echo $SX1276_PROTOCOLS)" >> $GITHUB_ENV
+          echo "CCNRF_PROTOCOLS=$(echo $CCNRF_PROTOCOLS)" >> $GITHUB_ENV
+          echo "ALL_PROTOCOLS=$(echo $ALL_PROTOCOLS)" >> $GITHUB_ENV
+
+          cd ..
+
+      - name: Configure the MULTI-Module firmware options
+        run: |
+
+          # CD to the MULTI-Module source
+          cd DIY-Multiprotocol-TX-Module
+
+          opt_disable $ALL_PROTOCOLS;
+          opt_enable FRSKYX_CC2500_INO AFHDS2A_A7105_INO MJXQ_NRF24L01_INO DSM_CYRF6936_INO;
+          opt_disable ENABLE_PPM;
+
+          # CD back to the working directory
+          cd ..
+
+      - name: Configuration diff
+        run: |
+          pushd ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module
+          echo ::group::_Config.h
+          git diff Multiprotocol/_Config.h
+          echo ::endgroup::
+          popd
+
       - name: Run Docker build with output file name
         run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=multi.bin" benlye/multi4in1-build
 
