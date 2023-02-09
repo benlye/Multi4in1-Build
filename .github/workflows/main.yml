@@ -273,8 +273,8 @@ jobs:
         run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=" benlye/multi4in1-build
 
       - name: Run Docker build with blank board
-              run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD="  benlye/multi4in1-build
-              continue-on-error: true
+        run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD="  benlye/multi4in1-build
+        continue-on-error: true
 
       - name: Run Docker build with no board
         run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi benlye/multi4in1-build
