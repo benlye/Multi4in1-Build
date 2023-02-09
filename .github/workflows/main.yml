@@ -188,8 +188,8 @@ jobs:
       - name: Run Docker build
         run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=$BOARD" benlye/multi4in1-build
 
-      - name: Run Docker build with versioned output file name
-        run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=$BOARD" -e "FWBINNAME=multi-v{VERSION}.bin" benlye/multi4in1-build
+      - name: Run Docker build with custom versioned output file name
+        run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=$BOARD" -e "FWBINNAME=myfw-v{VERSION}.bin" benlye/multi4in1-build
 
   # Run some tests on one board
   test-other:
@@ -264,10 +264,17 @@ jobs:
           popd
 
       - name: Run Docker build with output file name
-        run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=multi.bin" benlye/multi4in1-build
+        run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=myfw.bin" benlye/multi4in1-build
 
       - name: Run Docker build with versioned output file name
-        run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=multi-v{VERSION}.bin" benlye/multi4in1-build
+        run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=myfw-v{VERSION}.bin" benlye/multi4in1-build
+
+      - name: Run Docker build with blank file name
+        run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=" benlye/multi4in1-build
+
+      - name: Run Docker build with blank board
+              run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD="  benlye/multi4in1-build
+              continue-on-error: true
 
       - name: Run Docker build with no board
         run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi benlye/multi4in1-build
