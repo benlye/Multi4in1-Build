@@ -44,7 +44,7 @@ jobs:
           retention_days: "1"
 
   # Use a matrix of boards to run the tests
-  test:
+  test-matrix:
     needs: prepare
     runs-on: ubuntu-latest
 
@@ -188,9 +188,31 @@ jobs:
       - name: Run Docker build
         run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=$BOARD" benlye/multi4in1-build
 
+      - name: Run Docker build with versioned output file name
+        run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=multi-v{VERSION}.bin" benlye/multi4in1-build
+
+  # Run some test on one board
+  test-other:
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Docker build with output file name
+        run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=multi.bin" benlye/multi4in1-build
+
+      - name: Run Docker build with versioned output file name
+        run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=multi-v{VERSION}.bin" benlye/multi4in1-build
+
+      - name: Run Docker build with no board
+        run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi benlye/multi4in1-build
+        continue-on-error: true
+
+      - name: Run Docker build with unknown board
+        run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=no-such-board" benlye/multi4in1-build
+        continue-on-error: true
+
   publish:
     if: github.event_name == 'release' && github.event.action == 'created'
-    needs: [prepare, test]
+    needs: [prepare, test-matrix, test-other]
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
@@ -211,7 +233,7 @@ jobs:
 
   cleanup:
     if: ${{ always() }}
-    needs: [prepare, test]
+    needs: [prepare, test-matrix, test-other]
     runs-on: ubuntu-latest
     steps:
       - uses: geekyeggo/delete-artifact@v2
