@@ -128,11 +128,23 @@ if [ $? -eq 0 ]; then
     FWBINFILE=(`find /build/output/multi-*.bin -printf "%f\n"`)
 
     # Copy the versioned firmware file to the source folder, using custom name if specified
-    FWBINNAME="${FWBINNAME/\{VERSION\}/"$MULTI_VERSION"}"
+    if [[ "$FWBINNAME" == "" ]]; then
+        FWBINNAME=$FWBINFILE
+    else
+        FWBINNAME="${FWBINNAME/\{VERSION\}/"$MULTI_VERSION"}"
+    fi
+    
+    # Copy the binary file to the output path
     cp /build/output/$FWBINFILE "$SRCPATH/$FWBINNAME"
-
-    printf "\n\e[92mSUCCESS:\e[0m Compiled Multiprotocol firmware saved as '/multi/Multiprotocol/$FWBINNAME'.\n"
-    printf "         (The firmware file can be found in the same location as 'Multiprotocol.ino on the Docker host')\n\n"
+    
+    # Error if the copy failed, otherwise success
+    if [ $? -ne 0 ]; then
+        printf "\n\e[91mERROR: Failed to copy firmware file to output path.\e[0m\n\n"
+        exit 1
+    else
+        printf "\n\e[92mSUCCESS:\e[0m Compiled Multiprotocol firmware saved as '/multi/Multiprotocol/$FWBINNAME'.\n"
+        printf "         (The firmware file can be found in the same location as 'Multiprotocol.ino on the Docker host')\n\n"
+    fi
 else
     printf "\n\e[91mERROR: Build failed.\e[0m\n\n"
     exit 1
