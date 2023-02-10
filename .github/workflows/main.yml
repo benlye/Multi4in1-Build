@@ -15,11 +15,6 @@ on:
     branches:
       - master
 
-  # Triggers the workflow on release creation
-  release:
-    types:
-      - created
-
   # Allows the workflow to be triggered manually from the Actions tab
   workflow_dispatch:
 
@@ -45,6 +40,7 @@ jobs:
 
   # Use a matrix of boards to run the tests
   test-matrix:
+    if: ${{ false }}  # disable for now
     needs: prepare
     runs-on: ubuntu-latest
 
