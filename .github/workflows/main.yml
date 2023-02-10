@@ -253,20 +253,6 @@ jobs:
           PATCH_VERSION=$(grep "VERSION_PATCH" "Multiprotocol/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
           echo "MULTI_VERSION=$(echo $MAJOR_VERSION.$MINOR_VERSION.$REVISION_VERSION.$PATCH_VERSION)" >> $GITHUB_ENV
 
-          # Get the default name prefix for binary files
-          case "$BOARD" in
-            avr|avr-*|multi4in1:avr:multiatmega328p*)
-              FWPREFIX="multi-avr"
-              ;;
-            stm32|stm32-*|t18-5in1|multi4in1:STM32F1:*)
-              FWPREFIX="multi-stm"
-              ;;
-            orx|orx-*|multi4in1:avr:multixmega32d4)
-              FWPREFIX="multi-orx"
-              ;;
-          esac
-          echo "FWFILE_PREFIX=$(echo $FWPREFIX)" >> $GITHUB_ENV
-
           cd ..
 
       - name: Configure the MULTI-Module firmware options
@@ -304,7 +290,8 @@ jobs:
           if [ -f $EXPECTEDBINFILE ]; then
             ls ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
           else
-            echo Expected firmware file $EXPECTEDBINFILE not found!
+            echo -e "Expected firmware file $EXPECTEDBINFILE not found!\n"
+            ls ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
             exit 1
           fi
 
@@ -323,7 +310,7 @@ jobs:
           if [ -f $EXPECTEDBINFILE ]; then
             ls ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
           else
-            echo Expected firmware file $EXPECTEDBINFILE not found!
+            echo -e "Expected firmware file $EXPECTEDBINFILE not found!\n"
             ls ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
             exit 1
           fi
@@ -339,11 +326,11 @@ jobs:
           (set -x; docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=" multi4in1_test:${{ github.run_id }})
 
           # Fail if a firmware file exists
-          EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/${FWFILE_PREFIX}-${MULTI_VERSION}.bin"
+          EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/multi-stm-${MULTI_VERSION}.bin"
           if [ -f $EXPECTEDBINFILE ]; then
             ls ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
           else
-            echo Expected firmware file $EXPECTEDBINFILE not found!
+            echo -e "Expected firmware file $EXPECTEDBINFILE not found!\n"
             ls ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
             exit 1
           fi
@@ -362,7 +349,7 @@ jobs:
           # Fail if a firmware file exists
           EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin"
           if ls $EXPECTEDBINFILE 1> /dev/null 2>&1; then
-            echo Unexpected firmware file exists!
+            echo -e "Unexpected firmware file exists!\n"
             ls ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
             exit 1
           fi
@@ -381,7 +368,7 @@ jobs:
           # Fail if a firmware file exists
           EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin"
           if ls $EXPECTEDBINFILE 1> /dev/null 2>&1; then
-            echo Unexpected firmware file exists!
+            echo -e "Unexpected firmware file exists!\n"
             ls ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
             exit 1
           fi
@@ -400,7 +387,7 @@ jobs:
           # Fail if a firmware file exists
           EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin"
           if ls $EXPECTEDBINFILE 1> /dev/null 2>&1; then
-            echo Unexpected firmware file exists!
+            echo -e "Unexpected firmware file exists!\n"
             ls ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
             exit 1
           fi
