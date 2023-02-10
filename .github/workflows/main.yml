@@ -15,6 +15,11 @@ on:
     branches:
       - master
 
+  # Triggers the workflow on release creation
+  release:
+    types:
+      - created
+
   # Allows the workflow to be triggered manually from the Actions tab
   workflow_dispatch:
 
