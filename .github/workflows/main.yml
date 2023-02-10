@@ -195,6 +195,8 @@ jobs:
   test-other:
     needs: prepare
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
 
     steps:
       - name: Download Docker image
@@ -284,7 +286,7 @@ jobs:
 
           # Run the build
           docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=myfw.bin" multi4in1_test:${{ github.run_id }}
-          
+
           # Fail if the expected firmware file doesn't exist
           EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/myfw.bin"
           if [ ! -f $EXPECTEDBINFILE ]; then
@@ -302,7 +304,7 @@ jobs:
           docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=myfw-v{VERSION}.bin" multi4in1_test:${{ github.run_id }}
 
           # Fail if the expected firmware file doesn't exist
-          EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/myfw-${MULTI_VERSION}.bin"
+          EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/myfw-$MULTI_VERSION.bin"
           if [ ! -f $EXPECTEDBINFILE ]; then
             echo Expected firmware file $EXPECTEDBINFILE not found!
             exit 1
@@ -333,7 +335,7 @@ jobs:
 
           # Run the build
           docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e "BOARD="  multi4in1_test:${{ github.run_id }}
-        
+
           # Fail if a firmware file exists
           EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin"
           if ls $EXPECTEDBINFILE 1> /dev/null 2>&1; then
