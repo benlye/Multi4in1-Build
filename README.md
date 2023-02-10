@@ -24,17 +24,17 @@ Use your tool of choice to make changes to the Multiprotocol Module firmware sou
 ## Build the Firmware
 1. Run the container, specifying the path to the Multiprotocol firmware source as a mount volume and the board type as an enviroment variable:
 
-   `docker run --rm -it -v [Firmware Source Path]:/multifw -e BOARD=[board] benlye/multi4in1-build`
+   `docker run --rm -it -v [Firmware Source Path]:/multi -e "BOARD=[board]" [-e "FWBINNAME=[output file name]"] benlye/multi4in1-build`
    
    For example (Windows):
    
-   `docker run --rm -it -v "C:\Users\benlye\Github\DIY-Multiprotocol-TX-Module\Multiprotocol:/multi" -e "BOARD=stm32" benlye/multi4in1-build`
+   `docker run --rm -it -v "C:\Users\benlye\Github\DIY-Multiprotocol-TX-Module:/multi" -e "BOARD=stm32" benlye/multi4in1-build`
    
    Or (Linux):
    
-   `docker run --rm -it -v "/home/benlye/github/DIY-Multiprotocol-TX-Module/Multiprotocol:/multi" -e "BOARD=stm32" benlye/multi4in1-build`
+   `docker run --rm -it -v "/home/benlye/github/DIY-Multiprotocol-TX-Module:/multi" -e "BOARD=stm32" benlye/multi4in1-build`
 
-The compiled firmware image will be placed in the root of the source directory when the build has finished.  
+The compiled firmware image will be placed in the root of the source directory when the build has finished (same location as the `Multiprotocol.ino` file).  
 
 ## Boards
 Board names and aliases are case sensitive.
@@ -53,3 +53,18 @@ Board options are:
 | OrangeRX | orx | `multi4in1:avr:multixmega32d4` | |
 
 'Devel' boards can be specified by appending '-devel' to the alias, or substituting 'multi4in1' with 'multi4in1-devel' in the FQBN.
+
+## Output File Name
+The `FWBINNAME` variable can be used to specify a custom name for the compiled firmware file. If the option is omitted or blank, the default naming is used.
+
+The custom output file name can include the text `{VERSION}` which will be automatically replaced by the firmware version number.
+
+For example (Windows):
+   
+`docker run --rm -it -v "C:\Users\benlye\Github\DIY-Multiprotocol-TX-Module:/multi" -e "BOARD=stm32" -e "FWBINNAME=myfw-v{VERSION}" benlye/multi4in1-build`
+   
+Or (Linux):
+   
+`docker run --rm -it -v "/home/benlye/github/DIY-Multiprotocol-TX-Module:/multi" -e "BOARD=stm32" -e "FWBINNAME=myfw-v{VERSION}" benlye/multi4in1-build`
+
+Will create a firmware file named `myfw-v1.3.3.20.bin`.
