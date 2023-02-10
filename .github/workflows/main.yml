@@ -297,9 +297,7 @@ jobs:
           rm -f ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
 
           # Run the build
-          COMMAND="docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e \"BOARD=stm32\" -e 'FWBINNAME=myfw.bin' multi4in1_test:${{ github.run_id }}"
-          echo $COMMAND
-          $COMMAND
+          (set -x; docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=myfw.bin" multi4in1_test:${{ github.run_id }})
 
           # Fail if the expected firmware file doesn't exist
           EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/myfw.bin"
@@ -318,9 +316,7 @@ jobs:
           rm -f ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
 
           # Run the build
-          COMMAND="docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e \"BOARD=stm32\" -e \"FWBINNAME=myfw-v{VERSION}.bin\" multi4in1_test:${{ github.run_id }}"
-          echo $COMMAND
-          $COMMAND
+          (set -x; docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=myfw-v{VERSION}.bin" multi4in1_test:${{ github.run_id }})
 
           # Fail if the expected firmware file doesn't exist
           EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/myfw-v${MULTI_VERSION}.bin"
@@ -340,9 +336,7 @@ jobs:
           rm -f ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
 
           # Run the build
-          COMMAND="docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e \"BOARD=stm32\" -e \"FWBINNAME=\" multi4in1_test:${{ github.run_id }}"
-          echo $COMMAND
-          $COMMAND
+          (set -x; docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=" multi4in1_test:${{ github.run_id }})
 
           # Fail if a firmware file exists
           EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/${FWFILE_PREFIX}-${MULTI_VERSION}.bin"
@@ -363,9 +357,7 @@ jobs:
           rm -f ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
 
           # Run the build
-          COMMAND="docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e \"BOARD=\"  multi4in1_test:${{ github.run_id }}"
-          echo $COMMAND
-          $COMMAND
+          (set -x; docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=" multi4in1_test:${{ github.run_id }})
 
           # Fail if a firmware file exists
           EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin"
@@ -384,9 +376,7 @@ jobs:
           rm -f ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
 
           # Run the build
-          COMMAND="docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi multi4in1_test:${{ github.run_id }}"
-          echo $COMMAND
-          $COMMAND
+          (set -x; docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e multi4in1_test:${{ github.run_id }})
 
           # Fail if a firmware file exists
           EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin"
@@ -405,9 +395,7 @@ jobs:
           rm -f ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
 
           # Run the build
-          COMMAND="docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e \"BOARD=no-such-board\" multi4in1_test:${{ github.run_id }}"
-          echo $COMMAND
-          $COMMAND
+          (set -x; docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=no-such-board" -e "FWBINNAME=myfw.bin" multi4in1_test:${{ github.run_id }})
 
           # Fail if a firmware file exists
           EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin"
