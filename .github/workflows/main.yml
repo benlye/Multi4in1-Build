@@ -297,7 +297,7 @@ jobs:
           rm -f ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
 
           # Run the build
-          COMMAND="docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e 'BOARD=stm32' -e 'FWBINNAME=myfw.bin' multi4in1_test:${{ github.run_id }}"
+          COMMAND="docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e \"BOARD=stm32\" -e 'FWBINNAME=myfw.bin' multi4in1_test:${{ github.run_id }}"
           echo $COMMAND
           $COMMAND
 
@@ -318,7 +318,7 @@ jobs:
           rm -f ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
 
           # Run the build
-          COMMAND="docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e 'BOARD=stm32' -e 'FWBINNAME=myfw-v{VERSION}.bin' multi4in1_test:${{ github.run_id }}"
+          COMMAND="docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e \"BOARD=stm32\" -e \"FWBINNAME=myfw-v{VERSION}.bin\" multi4in1_test:${{ github.run_id }}"
           echo $COMMAND
           $COMMAND
 
@@ -340,7 +340,7 @@ jobs:
           rm -f ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
 
           # Run the build
-          COMMAND="docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e 'BOARD=stm32' -e 'FWBINNAME=' multi4in1_test:${{ github.run_id }}"
+          COMMAND="docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e \"BOARD=stm32\" -e \"FWBINNAME=\" multi4in1_test:${{ github.run_id }}"
           echo $COMMAND
           $COMMAND
 
@@ -363,7 +363,7 @@ jobs:
           rm -f ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
 
           # Run the build
-          COMMAND="docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e 'BOARD='  multi4in1_test:${{ github.run_id }}"
+          COMMAND="docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e \"BOARD=\"  multi4in1_test:${{ github.run_id }}"
           echo $COMMAND
           $COMMAND
 
@@ -384,7 +384,7 @@ jobs:
           rm -f ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
 
           # Run the build
-          COMMAND="docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi multi4in1_test:${{ github.run_id }}""
+          COMMAND="docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi multi4in1_test:${{ github.run_id }}"
           echo $COMMAND
           $COMMAND
 
@@ -405,7 +405,7 @@ jobs:
           rm -f ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
 
           # Run the build
-          COMMAND='docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=no-such-board" multi4in1_test:${{ github.run_id }}'
+          COMMAND="docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e \"BOARD=no-such-board\" multi4in1_test:${{ github.run_id }}"
           echo $COMMAND
           $COMMAND
 
