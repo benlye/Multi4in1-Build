@@ -137,6 +137,13 @@ jobs:
           echo "CCNRF_PROTOCOLS=$(echo $CCNRF_PROTOCOLS)" >> $GITHUB_ENV
           echo "ALL_PROTOCOLS=$(echo $ALL_PROTOCOLS)" >> $GITHUB_ENV
 
+          # Get the MULTI version number
+          MAJOR_VERSION=$(grep "VERSION_MAJOR" "Multiprotocol/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
+          MINOR_VERSION=$(grep "VERSION_MINOR" "Multiprotocol/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
+          REVISION_VERSION=$(grep "VERSION_REVISION" "Multiprotocol/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
+          PATCH_VERSION=$(grep "VERSION_PATCH" "Multiprotocol/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
+          echo "MULTI_VERSION=($echo $MAJOR_VERSION.$MINOR_VERSION.$REVISION_VERSION.$PATCH_VERSION)" >> $GITHUB_ENV
+
           cd ..
 
       - name: Configure the MULTI-Module firmware options
@@ -179,10 +186,10 @@ jobs:
           popd
 
       - name: Run Docker build
-        run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=$BOARD" multi4in1_test:${{ github.run_id }}
+        run: docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=$BOARD" multi4in1_test:${{ github.run_id }}
 
       - name: Run Docker build with custom versioned output file name
-        run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=$BOARD" -e "FWBINNAME=myfw-v{VERSION}.bin" multi4in1_test:${{ github.run_id }}
+        run: docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=$BOARD" -e "FWBINNAME=myfw-v{VERSION}.bin" multi4in1_test:${{ github.run_id }}
 
   # Run some tests on one board
   test-other:
@@ -239,6 +246,13 @@ jobs:
           echo "CCNRF_PROTOCOLS=$(echo $CCNRF_PROTOCOLS)" >> $GITHUB_ENV
           echo "ALL_PROTOCOLS=$(echo $ALL_PROTOCOLS)" >> $GITHUB_ENV
 
+          # Get the MULTI version number
+          MAJOR_VERSION=$(grep "VERSION_MAJOR" "Multiprotocol/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
+          MINOR_VERSION=$(grep "VERSION_MINOR" "Multiprotocol/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
+          REVISION_VERSION=$(grep "VERSION_REVISION" "Multiprotocol/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
+          PATCH_VERSION=$(grep "VERSION_PATCH" "Multiprotocol/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
+          echo "MULTI_VERSION=($echo $MAJOR_VERSION.$MINOR_VERSION.$REVISION_VERSION.$PATCH_VERSION)" >> $GITHUB_ENV
+
           cd ..
 
       - name: Configure the MULTI-Module firmware options
@@ -263,25 +277,97 @@ jobs:
           popd
 
       - name: Run Docker build with output file name
-        run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=myfw.bin" multi4in1_test:${{ github.run_id }}
+        run: |
+
+          # Delete any existing bin files
+          rm -f ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
+
+          # Run the build
+          docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=myfw.bin" multi4in1_test:${{ github.run_id }}
+          
+          # Fail if the expected firmware file doesn't exist
+          EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/myfw.bin"
+          if [ ! -f $EXPECTEDBINFILE ]; then
+            exit 1
+          fi
 
       - name: Run Docker build with versioned output file name
-        run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=myfw-v{VERSION}.bin" multi4in1_test:${{ github.run_id }}
+        run: |
+
+          # Delete any existing bin files
+          rm -f ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
+
+          # Run the build
+          docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=myfw-v{VERSION}.bin" multi4in1_test:${{ github.run_id }}
+
+          # Fail if the expected firmware file doesn't exist
+          EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/myfw-${MULTI_VERSION}.bin"
+          if [ ! -f $EXPECTEDBINFILE ]; then
+            exit 1
+          fi
 
       - name: Run Docker build with blank file name
-        run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=" multi4in1_test:${{ github.run_id }}
+        run: |
+
+          # Delete any existing bin files
+          rm -f ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
+
+          # Run the build
+          docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=" multi4in1_test:${{ github.run_id }}
+
+          # Fail if a firmware file exists
+          EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin"
+          if ls $EXPECTEDBINFILE 1> /dev/null 2>&1; then
+            exit 1
+          fi
 
       - name: Run Docker build with blank board
-        run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD="  multi4in1_test:${{ github.run_id }}
         continue-on-error: true
+        run: |
+
+          # Delete any existing bin files
+          rm -f ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
+
+          # Run the build
+          docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e "BOARD="  multi4in1_test:${{ github.run_id }}
+        
+          # Fail if a firmware file exists
+          EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin"
+          if ls $EXPECTEDBINFILE 1> /dev/null 2>&1; then
+            exit 1
+          fi
 
       - name: Run Docker build with no board
-        run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi multi4in1_test:${{ github.run_id }}
         continue-on-error: true
+        run: |
+
+          # Delete any existing bin files
+          rm -f ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
+
+          # Run the build
+          docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi multi4in1_test:${{ github.run_id }}
+
+          # Fail if a firmware file exists
+          EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin"
+          if ls $EXPECTEDBINFILE 1> /dev/null 2>&1; then
+            exit 1
+          fi
 
       - name: Run Docker build with unknown board
-        run: docker run --rm -t -v /home/runner/work/Multi4in1-Build/Multi4in1-Build/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=no-such-board" multi4in1_test:${{ github.run_id }}
         continue-on-error: true
+        run: |
+
+          # Delete any existing bin files
+          rm -f ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
+
+          # Run the build
+          docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=no-such-board" multi4in1_test:${{ github.run_id }}
+
+          # Fail if a firmware file exists
+          EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin"
+          if ls $EXPECTEDBINFILE 1> /dev/null 2>&1; then
+            exit 1
+          fi
 
   publish:
     if: github.event_name == 'release' && github.event.action == 'created'
