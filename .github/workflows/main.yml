@@ -355,8 +355,32 @@ jobs:
             exit 1
           fi
 
-      - name: Check blank board outcome
+      - name: Fail on blank board outcome 'success'
         if: steps.blank-board.outcome == 'success'
+        run: exit 1;
+
+      - name: Run Docker build with blank board name 2
+        id: blank-board2
+        if: success() || failure()
+        continue-on-error: true
+        run: |
+
+          # Delete any existing bin files
+          rm -f ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
+
+          # Run the build
+          (set -x; docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" multi4in1_test:${{ github.run_id }})
+
+          # Fail if a firmware file exists
+          EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin"
+          if ls $EXPECTEDBINFILE 1> /dev/null 2>&1; then
+            echo -e "Unexpected firmware file exists!\n"
+            ls ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
+            #exit 1
+          fi
+
+      - name: Fail on blank board outcome 'success' 2
+        if: steps.blank-board2.outcome == 'success'
         run: exit 1;
 
       - name: Run Docker build with no board
@@ -379,7 +403,7 @@ jobs:
             exit 1
           fi
 
-      - name: Check no board outcome
+      - name: Fail on no board outcome 'success'
         if: steps.no-board.outcome == 'success'
         run: exit 1;
 
@@ -403,7 +427,7 @@ jobs:
             exit 1
           fi
 
-      - name: Check unknown board outcome
+      - name: Fail on  unknown board outcome 'success'
         if: steps.bad-board.outcome == 'success'
         run: exit 1;
 
