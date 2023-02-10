@@ -336,6 +336,7 @@ jobs:
           fi
 
       - name: Run Docker build with blank board name
+        id: blank-board
         if: success() || failure()
         continue-on-error: true
         run: |
@@ -354,7 +355,12 @@ jobs:
             exit 1
           fi
 
+      - name: Check blank board outcome
+        if: steps.blank-board.outcome == 'success'
+        run: exit 1;
+
       - name: Run Docker build with no board
+        id: no-board
         if: success() || failure()
         continue-on-error: true
         run: |
@@ -373,7 +379,12 @@ jobs:
             exit 1
           fi
 
+      - name: Check no board outcome
+        if: steps.no-board.outcome == 'success'
+        run: exit 1;
+
       - name: Run Docker build with unknown board
+        id: bad-board
         if: success() || failure()
         continue-on-error: true
         run: |
@@ -391,6 +402,10 @@ jobs:
             ls ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
             exit 1
           fi
+
+      - name: Check unknown board outcome
+        if: steps.bad-board.outcome == 'success'
+        run: exit 1;
 
   publish:
     if: github.event_name == 'release' && github.event.action == 'created'
