@@ -145,13 +145,13 @@ jobs:
 
           # Get the default name prefix for binary files
           case "$BOARD" in
-            avr|avr-*|multi4in1:avr:multiatmega328p*)
+            avr|avr-*|*:avr:multiatmega328p*)
               FWPREFIX="multi-avr"
               ;;
-            stm32|stm32-*|t18-5in1|multi4in1:STM32F1:*)
+            stm32|stm32-*|t18-5in1|*:STM32F1:multi*)
               FWPREFIX="multi-stm"
               ;;
-            orx|orx-*|multi4in1:avr:multixmega32d4)
+            orx|orx-*|*:avr:multixmega32d4)
               FWPREFIX="multi-orx"
               ;;
           esac
