@@ -148,7 +148,7 @@ jobs:
             avr|avr-*|*:avr:multiatmega328p*)
               FWPREFIX="multi-avr"
               ;;
-            stm32|stm32-*|t18-5in1|*:STM32F1:multi*)
+            stm32|stm32-*|t18-5in1*|*:STM32F1:multi*)
               FWPREFIX="multi-stm"
               ;;
             orx|orx-*|*:avr:multixmega32d4)
