@@ -195,8 +195,6 @@ jobs:
   test-other:
     needs: prepare
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
 
     steps:
       - name: Download Docker image
@@ -253,7 +251,21 @@ jobs:
           MINOR_VERSION=$(grep "VERSION_MINOR" "Multiprotocol/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
           REVISION_VERSION=$(grep "VERSION_REVISION" "Multiprotocol/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
           PATCH_VERSION=$(grep "VERSION_PATCH" "Multiprotocol/Multiprotocol.h" | awk -v N=3 '{gsub(/\r/,""); print $N}')
-          echo "MULTI_VERSION=($echo $MAJOR_VERSION.$MINOR_VERSION.$REVISION_VERSION.$PATCH_VERSION)" >> $GITHUB_ENV
+          echo "MULTI_VERSION=$(echo $MAJOR_VERSION.$MINOR_VERSION.$REVISION_VERSION.$PATCH_VERSION)" >> $GITHUB_ENV
+
+          # Get the default name prefix for binary files
+          case "$BOARD" in
+            multi4in1:avr:multiatmega328p*)
+              FWPREFIX="multi-avr"
+              ;;
+            multi4in1:STM32F1:*)
+              FWPREFIX="multi-stm"
+              ;;
+            multi4in1:avr:multixmega32d4)
+              FWPREFIX="multi-orx"
+              ;;
+          esac
+          echo "FWFILE_PREFIX=$(echo FWPREFIX)" >> $GITHUB_ENV
 
           cd ..
 
@@ -289,12 +301,15 @@ jobs:
 
           # Fail if the expected firmware file doesn't exist
           EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/myfw.bin"
-          if [ ! -f $EXPECTEDBINFILE ]; then
+          if [ -f $EXPECTEDBINFILE ]; then
+            ls ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
+          else
             echo Expected firmware file $EXPECTEDBINFILE not found!
             exit 1
           fi
 
       - name: Run Docker build with versioned output file name
+        if: success() || failure()
         run: |
 
           # Delete any existing bin files
@@ -304,13 +319,16 @@ jobs:
           docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=myfw-v{VERSION}.bin" multi4in1_test:${{ github.run_id }}
 
           # Fail if the expected firmware file doesn't exist
-          EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/myfw-$MULTI_VERSION.bin"
-          if [ ! -f $EXPECTEDBINFILE ]; then
+          EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/myfw-${MULTI_VERSION}.bin"
+          if [ -f $EXPECTEDBINFILE ]; then
+            ls ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
+          else
             echo Expected firmware file $EXPECTEDBINFILE not found!
             exit 1
           fi
 
       - name: Run Docker build with blank file name
+        if: success() || failure()
         run: |
 
           # Delete any existing bin files
@@ -320,13 +338,16 @@ jobs:
           docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module:/multi -e "BOARD=stm32" -e "FWBINNAME=" multi4in1_test:${{ github.run_id }}
 
           # Fail if a firmware file exists
-          EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin"
-          if ls $EXPECTEDBINFILE 1> /dev/null 2>&1; then
+          EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/${FWFILE_PREFIX}-${MULTI_VERSION}*.bin"
+          if [ -f $EXPECTEDBINFILE ]; then
+            ls ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
+          else
             echo Expected firmware file $EXPECTEDBINFILE not found!
             exit 1
           fi
 
       - name: Run Docker build with blank board
+        if: success() || failure()
         continue-on-error: true
         run: |
 
@@ -344,6 +365,7 @@ jobs:
           fi
 
       - name: Run Docker build with no board
+        if: success() || failure()
         continue-on-error: true
         run: |
 
@@ -356,11 +378,13 @@ jobs:
           # Fail if a firmware file exists
           EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin"
           if ls $EXPECTEDBINFILE 1> /dev/null 2>&1; then
+            ls $EXPECTEDBINFILE
             echo Unexpected firmware file exists!
             exit 1
           fi
 
       - name: Run Docker build with unknown board
+        if: success() || failure()
         continue-on-error: true
         run: |
 
@@ -373,6 +397,7 @@ jobs:
           # Fail if a firmware file exists
           EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin"
           if ls $EXPECTEDBINFILE 1> /dev/null 2>&1; then
+            ls $EXPECTEDBINFILE
             echo Unexpected firmware file exists!
             exit 1
           fi
