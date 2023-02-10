@@ -288,6 +288,7 @@ jobs:
           # Fail if the expected firmware file doesn't exist
           EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/myfw.bin"
           if [ ! -f $EXPECTEDBINFILE ]; then
+            echo Expected firmware file $EXPECTEDBINFILE not found!
             exit 1
           fi
 
@@ -303,6 +304,7 @@ jobs:
           # Fail if the expected firmware file doesn't exist
           EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/myfw-${MULTI_VERSION}.bin"
           if [ ! -f $EXPECTEDBINFILE ]; then
+            echo Expected firmware file $EXPECTEDBINFILE not found!
             exit 1
           fi
 
@@ -318,6 +320,7 @@ jobs:
           # Fail if a firmware file exists
           EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin"
           if ls $EXPECTEDBINFILE 1> /dev/null 2>&1; then
+            echo Expected firmware file $EXPECTEDBINFILE not found!
             exit 1
           fi
 
@@ -334,6 +337,7 @@ jobs:
           # Fail if a firmware file exists
           EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin"
           if ls $EXPECTEDBINFILE 1> /dev/null 2>&1; then
+            echo Unexpected firmware file exists!
             exit 1
           fi
 
@@ -350,6 +354,7 @@ jobs:
           # Fail if a firmware file exists
           EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin"
           if ls $EXPECTEDBINFILE 1> /dev/null 2>&1; then
+            echo Unexpected firmware file exists!
             exit 1
           fi
 
@@ -366,6 +371,7 @@ jobs:
           # Fail if a firmware file exists
           EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin"
           if ls $EXPECTEDBINFILE 1> /dev/null 2>&1; then
+            echo Unexpected firmware file exists!
             exit 1
           fi
 
