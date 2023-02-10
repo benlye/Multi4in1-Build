@@ -322,6 +322,25 @@ jobs:
           echo ::endgroup::
           popd
 
+      - name: Run Docker build with alternate source mount
+        run: |
+
+          # Delete any existing bin files
+          rm -f ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
+
+          # Run the build
+          (set -x; docker run --rm -t -v ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol:/multi -e "BOARD=stm32" multi4in1_test:${{ github.run_id }})
+
+          # Fail if the expected firmware file doesn't exist
+          EXPECTEDBINFILE="${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/multi-stm-${MULTI_VERSION}.bin"
+          if [ -f $EXPECTEDBINFILE ]; then
+            ls ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
+          else
+            echo -e "Expected firmware file $EXPECTEDBINFILE not found!\n"
+            ls ${GITHUB_WORKSPACE}/DIY-Multiprotocol-TX-Module/Multiprotocol/*.bin
+            exit 1
+          fi
+
       - name: Run Docker build with output file name
         run: |
 
