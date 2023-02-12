@@ -28,8 +28,8 @@ function showusage
     printf "Examples:\n"
     printf '  docker run --rm -it -v \"C:\\Users\\benlye\\Downloads\\DIY-Multiprotocol-TX-Module:/multi\" -e \"BOARD=stm32\" benlye/multi4in1-build\n'
     printf '  docker run --rm -it -v \"C:\\Users\\benlye\\Downloads\\DIY-Multiprotocol-TX-Module:/multi\" -e \"BOARD=multi4in1:STM32F1:multistm32f103cb:debug_option=native\" benlye/multi4in1-build\n'
-    printf '  docker run --rm -it -v \"C:\\Users\\benlye\\Downloads\\DIY-Multiprotocol-TX-Module:/multi\" -e \"BOARD=stm32\" -\"FWBINFILE=myfirmware.bin\" benlye/multi4in1-build\n'
-    printf '  docker run --rm -it -v \"C:\\Users\\benlye\\Downloads\\DIY-Multiprotocol-TX-Module:/multi\" -e \"BOARD=stm32\" -\"FWBINFILE=myfirmware-{VERSION}.bin\" benlye/multi4in1-build\n\n'
+    printf '  docker run --rm -it -v \"C:\\Users\\benlye\\Downloads\\DIY-Multiprotocol-TX-Module:/multi\" -e \"BOARD=stm32\" -e \"FWBINNAME=myfirmware.bin\" benlye/multi4in1-build\n'
+    printf '  docker run --rm -it -v \"C:\\Users\\benlye\\Downloads\\DIY-Multiprotocol-TX-Module:/multi\" -e \"BOARD=stm32\" -e \"FWBINNAME=myfirmware-{VERSION}.bin\" benlye/multi4in1-build\n\n'
 }
 
 # Look for the MULTI source in the mounted volume, error if it's not found
