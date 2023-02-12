@@ -38,7 +38,7 @@ jobs:
         run: docker build -t multi4in1_test:${{ github.run_id }} .
 
       - name: Upload container image
-        uses: benlye/docker-image-artifact-upload@v1.2.1
+        uses: ishworkh/docker-image-artifact-upload@v1
         with:
           image: "multi4in1_test:${{ github.run_id }}"
           retention_days: "1"
@@ -93,7 +93,7 @@ jobs:
 
     steps:
       - name: Download Docker image
-        uses: benlye/docker-image-artifact-download@v1.2.1
+        uses: ishworkh/docker-image-artifact-download@v1
         with:
           image: "multi4in1_test:${{ github.run_id }}"
 
@@ -249,7 +249,7 @@ jobs:
 
     steps:
       - name: Download Docker image
-        uses: benlye/docker-image-artifact-download@v1.2.1
+        uses: ishworkh/docker-image-artifact-download@v1
         with:
           image: "multi4in1_test:${{ github.run_id }}"
 
